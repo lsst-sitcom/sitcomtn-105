@@ -3,5 +3,5 @@
 
 from documenteer.conf.technote import *  # noqa F401 F403
 
-nbsphinx_execute = 'never'
-exclude_patterns.append("notebooks")
+# Disable notebook execution with myst-nb
+nb_execution_mode = "off"
