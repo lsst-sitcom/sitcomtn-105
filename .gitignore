@@ -4,3 +4,5 @@ _build/
 venv/
 .venv/
 .ipynb_checkpoints
+*plots
+*data
