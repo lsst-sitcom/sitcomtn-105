@@ -264,6 +264,51 @@ def make_dataframe(overlaps, client, az_min, az_max):
 
     return df
 
+async def init_and_compute(date_dict, efd_server="usdf_efd"):
+    """"
+    Initialize everything, retrieve data, and return a pandas dataframe corresponding to the date / time provided.
+    It also returns the fixed azimuth angle of the TMA corresponding to the data that have been used.
+
+    Args:
+        date_dict: dictionnary with date, start time and end_time as keys
+        efd_server (str): name of the efd server to be used (default: usdf_efd)
+
+    Return:
+        df : pandas dataframe
+        azimuth (float) : TMA azimuth angle 
+        client : EFD client
+    """
+
+    date = date_dict["date"]
+    start_time = Time(f"{date} {date_dict['start_time']}")
+    end_time = Time(f"{date} {date_dict['end_time']}")
+
+    client = EfdClient(efd_server)
+
+    # Get all time ranges where the TMA is still in azimuth and in elevation
+    t_range_azi = await get_time_range_by_axis(client, "azimuth", start_time, end_time)
+    t_range_ele = await get_time_range_by_axis(client, "elevation", start_time, end_time)
+
+    # Find the overlaps between the 2 sets of time ranges
+    # We want data spanning over a minimum amount of time during the overlap period
+    # min_delta is in seconds
+    min_delta = 20
+    overlaps = get_overlaps(t_range_azi, t_range_ele, min_delta)
+    print(
+        f"We found {len(overlaps)} time periods where the TMA is still in both azimuth and elevation"
+    )
+
+    # We are going to plot the Torque as a function of the elevation angle for a given position of the TMA in azimuth
+    # So we will first identify what is the most common TMA position in azimuth over all the overlap periods and we will make the analysis for this
+    # position only
+    az_min, az_max = get_common_azimuth(overlaps, client)
+
+    # Create pandas dataframe with the relevant EFD data
+    df = make_dataframe(overlaps, client, az_min, az_max)
+
+    return df, 0.5*(az_min + az_max), client
+
+
 def plot_torque_versus_elevation(df, date, sel_azi, plot_dir, save_plot=True):
     """
     Plot torque versus elevation angle for the df dataframe
@@ -365,7 +410,7 @@ def plot_history(df, client, t_back, date, sel_azi, plot_dir, save_plot=True):
         end=end,
     )
 
-    fig, ax = plt.subplots(4, 1, sharex=True, dpi=125, figsize=(12, 5))
+    fig, ax = plt.subplots(4, 1, sharex=True, dpi=125, figsize=(12, 8))
     ax[0].plot(df_ele_2.index, df_ele_2["actualPosition"])
     ax[1].plot(df_ele_2.index, df_ele_2["actualTorque"])
     # ax[1].set_yscale("log")
