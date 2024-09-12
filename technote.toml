@@ -13,6 +13,24 @@ license.id = "CC-BY-4.0"
 state = "stable"
 
 [[technote.authors]]
+name = {given = "Dominique", family = "Boutigny"}
+internal_id = "boutignyd"
+orcid = "https://orcid.org/0000-0003-4887-2150"
+[[technote.authors.affiliations]]
+name = "Université Grenoble-Alpes"
+internal_id = "LAPP"
+address = "Université Savoie Mont Blanc, CNRS/IN2P3 Laboratoire d'Annecy-le-Vieux de Physique des Particules, 9 Chemin de Bellevue – BP 110, F-74940 Annecy-le-Vieux Cedex, France"
+[[technote.authors]]
+name = {given = "Yijung", family = "Kang"}
+internal_id = "kangy"
+orcid = "https://orcid.org/0000-0002-5261-5803"
+[[technote.authors.affiliations]]
+name = "Kavli Institute for Particle Astrophysics and Cosmology"
+internal_id = "SLAC-Kavli"
+address = "SLAC National Accelerator Laboratory, Stanford University, Stanford, CA 94025, USA"
+[[technote.authors]]
+name = {given = "Sean", family = "MacBride"}
+[[technote.authors]]
 name.given = "Bruno C."
 name.family = "Quint"
 internal_id = "quintb"
@@ -21,3 +39,8 @@ orcid = "https://orcid.org/0000-0002-1557-3560"
 name = "Vera C. Rubin Observatory Project Office"
 internal_id = "RubinObs"
 address = "950 N. Cherry Ave., Tucson, AZ 85719, USA"
+
+[[technote.authors.affiliations]]
+name = "Vera C. Rubin Observatory"
+internal_id = "RubinObsC"
+address = "Avenida Juan Cisternas #1500, La Serena, Chile"

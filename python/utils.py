@@ -228,7 +228,7 @@ def make_dataframe(overlaps, client, az_min, az_max):
             ts_start.append(df_ele.index[0])
             ts_end.append(df_ele.index[-1])
 
-            # Look back in time to retrieve the rotation direction of the last TMA movement in elevation and in azimuth
+            # Look back in time to retrieve the rotation direction of the last TMA movement in elevation
 
             df_ele_back = getEfdData(
                 client,
@@ -237,17 +237,8 @@ def make_dataframe(overlaps, client, az_min, az_max):
                 begin=Time(overlap.start_datetime) - look_back,
                 end=Time(overlap.start_datetime),
             )
-            cut_speed = np.abs(df_ele_back["actualVelocity"]) > 0.01
+            cut_speed = np.abs(df_ele_back["actualVelocity"]) > 0.05
             direction.append(np.sign(df_ele_back["actualVelocity"][cut_speed].iloc[-1]))
-
-            df_azi_back = getEfdData(
-                client,
-                "lsst.sal.MTMount.azimuth",
-                columns=["actualVelocity"],
-                begin=Time(overlap.start_datetime) - look_back,
-                end=Time(overlap.start_datetime),
-            )
-            cut_speed = np.abs(df_azi_back["actualVelocity"]) > 0.01
 
     data = {
         "ts_start": ts_start,
@@ -309,7 +300,7 @@ async def init_and_compute(date_dict, efd_server="usdf_efd"):
     return df, 0.5*(az_min + az_max), client
 
 
-def plot_torque_versus_elevation(df, date, sel_azi, plot_dir, save_plot=True):
+def plot_torque_versus_elevation(df, date, sel_azi, plot_dir, save_plot=True, print_numbers=True):
     """
     Plot torque versus elevation angle for the df dataframe
 
@@ -322,7 +313,9 @@ def plot_torque_versus_elevation(df, date, sel_azi, plot_dir, save_plot=True):
 
         plot_dir (str) : path name to save plots
 
-        save_plot (bool): save plot if True
+        save_plot (bool): save plot if True (default)
+
+        print_numbers (bool) : if True print sequence number beside each points 
     """
 
     y_span = df["mean_torque"].max() - df["mean_torque"].min()
@@ -353,12 +346,13 @@ def plot_torque_versus_elevation(df, date, sel_azi, plot_dir, save_plot=True):
     ax.set_ylabel("Elevation torque (N.m)")
     ax.set_xlim([0, 95])
 
-    for i in range(len(df)):
-        ax.text(
-            df["mean_pos"][i] + i % 2,
-            df["mean_torque"][i] + ((i + 1) % 2) * y_span / 100,
-            f"{i}",
-        )
+    if print_numbers:
+        for i in range(len(df)):
+            ax.text(
+                df["mean_pos"][i] + i % 2,
+                df["mean_torque"][i] + ((i + 1) % 2) * y_span / 100,
+                f"{i}",
+            )
 
     ax.legend()
 

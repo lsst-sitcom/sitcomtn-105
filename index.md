@@ -263,6 +263,140 @@ t_back = 1000
 plot_history(df, client, t_back, date_dict["date"], sel_azi, plot_dir, save_plot=True)
 ```
 
+We see that the data sample is clean, thanks to the azimuth angle which is strictly constant during the analysis but we are missing data points especially at low elevation angle
+
++++
+
+### 2024-01-10
+
+With this data sample, we have more data points but even if the azimuth angle is always the same (60.3 degrees) during the torque measurements, it is changing between the
+measurements. This is adding a component to the torque measured on the elevation axis and is the reason why we see a spread on the data points.
+
+```{code-cell} ipython3
+---
+mystnb:
+  code_prompt_hide: hide {type}
+  code_prompt_show: show {type}
+tags: [hide-cell]
+---
+date_dict = {
+    "date": "2024-01-10",
+    "start_time": "00:00:00.00",
+    "end_time": "23:59:00.00",
+}
+df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
+```
+
+### Torque versus Elevation Angle
+
+```{code-cell} ipython3
+---
+mystnb:
+  code_prompt_hide: hide {type}
+  code_prompt_show: show {type}
+tags: [hide-input]
+---
+# Plot torque versus elevation angle
+plot_torque_versus_elevation(
+    df, date_dict["date"], sel_azi, plot_dir, print_numbers=False
+)
+```
+
+The sequence of events in chronological order can be understood on the following plot corresponding to the points around elevation=21 degrees.
+
+The jumps in the torque values related to change in azimuth position between the measurements are particularly clear around 00:25 - 00:32 and 00:48 - 00:55
+
+```{code-cell} ipython3
+---
+mystnb:
+  code_prompt_hide: hide {type}
+  code_prompt_show: show {type}
+tags: [hide-input]
+---
+date_dict = {
+    "date": "2024-01-10",
+    "start_time": "00:20:00.00",
+    "end_time": "01:10:00.00",
+}
+df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
+
+# We will retrieve data back t_back seconds in the past
+t_back = 1000
+plot_history(df, client, t_back, date_dict["date"], sel_azi, plot_dir, save_plot=True)
+```
+
+## Analysis of M1M3 Surrogate and M1M3 Cell on the TMA
+
+### 2023-06-22
+
+```{code-cell} ipython3
+---
+mystnb:
+  code_prompt_hide: hide {type}
+  code_prompt_show: show {type}
+tags: [hide-cell]
+---
+date_dict = {
+    "date": "2023-06-22",
+    "start_time": "00:00:00.00",
+    "end_time": "23:59:00.00",
+}
+df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
+```
+
+### Torque versus elevation angle
+
+```{code-cell} ipython3
+---
+mystnb:
+  code_prompt_hide: hide {type}
+  code_prompt_show: show {type}
+tags: [hide-input]
+---
+# Plot torque versus elevation angle
+plot_torque_versus_elevation(
+    df, date_dict["date"], sel_azi, plot_dir, print_numbers=False
+)
+```
+
+## Analysis of M2 Surrogate and Cell on the TMA
+
+### 2024-03-28
+
+```{code-cell} ipython3
+---
+mystnb:
+  code_prompt_hide: hide {type}
+  code_prompt_show: show {type}
+tags: [hide-cell]
+---
+date_dict = {
+    "date": "2024-03-28",
+    "start_time": "00:00:00.00",
+    "end_time": "23:59:00.00",
+}
+df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
+```
+
+```{code-cell} ipython3
+---
+mystnb:
+  code_prompt_hide: hide {type}
+  code_prompt_show: show {type}
+tags: [hide-input]
+---
+# Plot torque versus elevation angle
+plot_torque_versus_elevation(
+    df, date_dict["date"], sel_azi, plot_dir, print_numbers=True
+)
+```
+
+## Conclusions
+
+- We have produced reference plots for various configurations of mirrors, cells and surrogates on the TMA. These reference plots will be useful during the balancing process of the telescope in its final configuration with glass.
+- We have shown the importance to keep the TMA fixed in azimuth during the whole torque versus elevation measurement.
+- We have identified an ideal data taking configuration during balancing that guarantee enough data points and a stable azimuth position. The ccurrently existing Block corresponding to this configuration is BLOCK-177.  
+
 ```{code-cell} ipython3
 
 ```
