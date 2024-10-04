@@ -1,14 +1,15 @@
 ---
-jupytext:
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.16.4
-kernelspec:
-  display_name: LSST
-  language: python
-  name: lsst
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.16.4
+  kernelspec:
+    display_name: LSST
+    language: python
+    name: lsst
 ---
 
 # Compare TMA balancing data from previous balancing events with the next events
@@ -21,6 +22,12 @@ We want to establish a baseline before we start the procedure by producing a set
 1. M2 Surrogate and Cell on TMA
 2. M1M3 Surrogate and M1M3 Cell on TMA
 3. M1M3 Surrogate and Cell + M2 Surrogate and Cell on TMA
+
+The masses of the various optical components are given in [LTS-213](https://docushare.lsst.org/docushare/dsweb/Get/LTS-213):
+
+ - Camera + Rotator / Hexapod : 4060 +/- 27 kg
+ - M2 Assembly + M2 Baffle + M2 Hexapod : 5487 +/- 24 kg
+ - M1M3 Mirror and Cell Assembly : 53000 +/- 372 kg
 
 ## Associated JIRA tickets
 
@@ -38,7 +45,7 @@ Here is an approximate timeline of different integration phases where we needed 
 The dates where the new balancing process was performed are the following:
 -  ComCam and M2 glass on its cell + yellow cross: 2024/09/03 between 14:30 and 16:30 (UTC)
 
-After investigating the various possible datasets we found that 
+After investigating the various possible datasets (ideally a period of time where the TMA is fixed in azimuth and where the elevation angle is decreasing and/ or increasing), we found that 
 the most interesting data for this analysis are those from BLOCK-177 https://rubinobs.atlassian.net/browse/BLOCK-177
 initially designed for laser tracker tests.
 The TMA is still on the azimuth axis and the elevation increases and decreases by steps of 5 (or 10 ?) degrees
@@ -62,7 +69,6 @@ Which should be both equal to 1 (motion state == stopped)
 As the the motion states are stored in separate topics, the timestamps of both series are not identical, so we need to perform an extra computation to find the overlaping time periods 
 where both motion states are "stopped".
 
-+++
 
 ## Dates with interesting data
 
@@ -91,13 +97,7 @@ Coarse balance with Yellow cross - M2+Cell and ComCam on TMA
 
 * 2024-09-03 14:30 - 16:00
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-cell]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-cell"]
 # Notebook extensions for formatting and auto-reload libraries
 %matplotlib inline
 %load_ext lab_black
@@ -119,13 +119,7 @@ if not os.path.exists(plot_dir):
     os.makedirs(plot_dir)
 ```
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-cell]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-cell"]
 # Define the time period that we are going to investigate
 
 # date_dict = {
@@ -161,20 +155,13 @@ The second kind of plots is showing the behavior of the following quantities in 
 
 The periods of time where the analysis is done are indicated by green and red segments with the same color coding as for the previous plot.
 
-+++
 
 ## Analysis of M2 Glass + Cell + Yellow cross
 
 ### 2024-09-03
 This is a TMA movement in elevation from horizon to zenith with a coarse balancing
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show for {type}
-tags: [hide-cell]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show for {type}"} tags=["hide-cell"]
 date_dict = {
     "date": "2024-09-03",
     "start_time": "14:30:00.00",
@@ -186,13 +173,7 @@ df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
 
 ### Torque versus Elevation Angle
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 # Plot torque versus elevation angle
 plot_torque_versus_elevation(df, date_dict["date"], sel_azi, plot_dir)
 ```
@@ -200,17 +181,10 @@ plot_torque_versus_elevation(df, date_dict["date"], sel_azi, plot_dir)
 The red point labeled "10" correspond to a situation where the home command was briefly sent to the TMA which then rotated backward before resuming its movement toward
 zenith. The point is below the green curve as a result of the hysteresis.
 
-+++
 
 ### Plot data in chronological order
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 # We will retrieve data back t_back seconds in the past
 t_back = 1000
 plot_history(df, client, t_back, date_dict["date"], sel_azi, plot_dir, save_plot=True)
@@ -221,13 +195,7 @@ plot_history(df, client, t_back, date_dict["date"], sel_azi, plot_dir, save_plot
 ### 2024-01-06
 This is a TMA movement in elevation from horizon to zenith and back with BLOCK-177
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-cell]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-cell"]
 date_dict = {
     "date": "2024-01-06",
     "start_time": "09:00:00.00",
@@ -238,26 +206,14 @@ df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
 
 ### Torque versus Elevation Angle
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 # Plot torque versus elevation angle
 plot_torque_versus_elevation(df, date_dict["date"], sel_azi, plot_dir)
 ```
 
 ### Plot data in chronological order
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 # We will retrieve data back t_back seconds in the past
 t_back = 1000
 plot_history(df, client, t_back, date_dict["date"], sel_azi, plot_dir, save_plot=True)
@@ -265,20 +221,13 @@ plot_history(df, client, t_back, date_dict["date"], sel_azi, plot_dir, save_plot
 
 We see that the data sample is clean, thanks to the azimuth angle which is strictly constant during the analysis but we are missing data points especially at low elevation angle
 
-+++
 
 ### 2024-01-10
 
 With this data sample, we have more data points but even if the azimuth angle is always the same (60.3 degrees) during the torque measurements, it is changing between the
 measurements. This is adding a component to the torque measured on the elevation axis and is the reason why we see a spread on the data points.
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-cell]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-cell"]
 date_dict = {
     "date": "2024-01-10",
     "start_time": "00:00:00.00",
@@ -289,13 +238,7 @@ df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
 
 ### Torque versus Elevation Angle
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 # Plot torque versus elevation angle
 plot_torque_versus_elevation(
     df, date_dict["date"], sel_azi, plot_dir, print_numbers=False
@@ -306,13 +249,7 @@ The sequence of events in chronological order can be understood on the following
 
 The jumps in the torque values related to change in azimuth position between the measurements are particularly clear around 00:25 - 00:32 and 00:48 - 00:55
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 date_dict = {
     "date": "2024-01-10",
     "start_time": "00:20:00.00",
@@ -329,13 +266,7 @@ plot_history(df, client, t_back, date_dict["date"], sel_azi, plot_dir, save_plot
 
 ### 2023-06-22
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-cell]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-cell"]
 date_dict = {
     "date": "2023-06-22",
     "start_time": "00:00:00.00",
@@ -346,13 +277,7 @@ df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
 
 ### Torque versus elevation angle
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 # Plot torque versus elevation angle
 plot_torque_versus_elevation(
     df, date_dict["date"], sel_azi, plot_dir, print_numbers=False
@@ -363,13 +288,7 @@ plot_torque_versus_elevation(
 
 ### 2024-03-28
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-cell]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-cell"]
 date_dict = {
     "date": "2024-03-28",
     "start_time": "00:00:00.00",
@@ -378,13 +297,7 @@ date_dict = {
 df, sel_azi, client = await init_and_compute(date_dict, "usdf_efd")
 ```
 
-```{code-cell} ipython3
----
-mystnb:
-  code_prompt_hide: hide {type}
-  code_prompt_show: show {type}
-tags: [hide-input]
----
+```python mystnb={"code_prompt_hide": "hide {type}", "code_prompt_show": "show {type}"} tags=["hide-input"]
 # Plot torque versus elevation angle
 plot_torque_versus_elevation(
     df, date_dict["date"], sel_azi, plot_dir, print_numbers=True
@@ -397,6 +310,6 @@ plot_torque_versus_elevation(
 - We have shown the importance to keep the TMA fixed in azimuth during the whole torque versus elevation measurement.
 - We have identified an ideal data taking configuration during balancing that guarantee enough data points and a stable azimuth position. The ccurrently existing Block corresponding to this configuration is BLOCK-177.  
 
-```{code-cell} ipython3
+```python
 
 ```
