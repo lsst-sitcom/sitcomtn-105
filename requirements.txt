@@ -1,2 +1,2 @@
-documenteer[technote]>=1.0.0
+documenteer[technote]>=2.4.0
 pandoc
